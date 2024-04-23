@@ -168,11 +168,11 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
           console.warn("Invalid tile zoom or position:", z, x);
           continue;
         }
-
-        console.log(`[tdf] Fetching tile ${z}, ${x} | tileId: ${tileId}`);
-
+        
         validTileIds.push(tileId);
         tilePromises.push(await this.tile(z, x));
+
+        // console.log(`[tdf] Fetched tile ${z}, ${x} | tileId: ${tileId} | tilePromises: ${JSON.stringify(tilePromises, null, 2)}`);
       }
 
       // console.log(`[tdf] tilePromises results: ${JSON.stringify(tilePromises)}`);
@@ -182,6 +182,7 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
         tiles[validTileId].tilePositionId = validTileId;
       }
       receivedTiles(tiles);
+      // console.log(`[tdf] tiles: ${JSON.stringify(tiles, null, 2)}`);
 
       // Promise.all(tilePromises).then((values) => {
       //   console.log(`[tdf] values from within fetchTilesDebounced: ${JSON.stringify(values)}`);
@@ -258,10 +259,11 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
                 objs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
-                  chromOffset: chromStart,
+                  chrOffset: chromStart,
                   importance: parseFloat(fields[4], 10),
                   uid: slugid.nice(),
                   fields: fields,
+                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`,
                 });
               });
               minX = chromEnd;
@@ -283,10 +285,11 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
                 objs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
-                  chromOffset: chromStart,
+                  chrOffset: chromStart,
                   importance: parseFloat(fields[4], 10),
                   uid: slugid.nice(),
                   fields: fields,
+                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`,
                 });
               });
               break;
@@ -299,8 +302,9 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
         tile.tileId = `${z}.${x}`;
         tile.remoteId = `${z}.${x}`;
         tile.tileData = objs;
+        return tile;
 
-        return objs;
+        // return objs;
 
         // return Promise.all(recordPromises).then((v) => {
         //   const values = v;

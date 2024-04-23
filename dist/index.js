@@ -11829,7 +11829,6 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
           console.warn("Invalid tile zoom or position:", z, x);
           continue;
         }
-        console.log(`[tdf] Fetching tile ${z}, ${x} | tileId: ${tileId}`);
         validTileIds.push(tileId);
         tilePromises.push(await this.tile(z, x));
       }
@@ -11869,10 +11868,11 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
                 objs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
-                  chromOffset: chromStart,
+                  chrOffset: chromStart,
                   importance: parseFloat(fields[4], 10),
                   uid: import_slugid.default.nice(),
-                  fields
+                  fields,
+                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`
                 });
               });
               minX = chromEnd;
@@ -11884,10 +11884,11 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
                 objs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
-                  chromOffset: chromStart,
+                  chrOffset: chromStart,
                   importance: parseFloat(fields[4], 10),
                   uid: import_slugid.default.nice(),
-                  fields
+                  fields,
+                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`
                 });
               });
               break;
@@ -11897,7 +11898,7 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
         tile.tileId = `${z}.${x}`;
         tile.remoteId = `${z}.${x}`;
         tile.tileData = objs;
-        return objs;
+        return tile;
       });
     }
   }
