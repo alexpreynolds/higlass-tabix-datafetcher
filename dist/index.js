@@ -12051,7 +12051,7 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
         tile.tileId = `${z}.${x}`;
         tile.remoteId = `${z}.${x}`;
         tile.tileData = objs;
-        return tile;
+        return objs;
       });
     }
   }

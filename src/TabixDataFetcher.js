@@ -302,9 +302,9 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
         tile.tileId = `${z}.${x}`;
         tile.remoteId = `${z}.${x}`;
         tile.tileData = objs;
-        return tile;
+        // return tile;
 
-        // return objs;
+        return objs;
 
         // return Promise.all(recordPromises).then((v) => {
         //   const values = v;
