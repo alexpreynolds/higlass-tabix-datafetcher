@@ -171,32 +171,14 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
         
         validTileIds.push(tileId);
         tilePromises.push(await this.tile(z, x));
-
-        // console.log(`[tdf] Fetched tile ${z}, ${x} | tileId: ${tileId} | tilePromises: ${JSON.stringify(tilePromises, null, 2)}`);
       }
 
-      // console.log(`[tdf] tilePromises results: ${JSON.stringify(tilePromises)}`);
       for (let i = 0; i < tilePromises.length; i++) {
         const validTileId = validTileIds[i];
         tiles[validTileId] = tilePromises[i];
         tiles[validTileId].tilePositionId = validTileId;
       }
       receivedTiles(tiles);
-      // console.log(`[tdf] tiles: ${JSON.stringify(tiles, null, 2)}`);
-
-      // Promise.all(tilePromises).then((values) => {
-      //   console.log(`[tdf] values from within fetchTilesDebounced: ${JSON.stringify(values)}`);
-      //   for (let i = 0; i < values.length; i++) {
-      //     const validTileId = validTileIds[i];
-      //     tiles[validTileId] = values[i];
-      //     tiles[validTileId].tilePositionId = validTileId;
-      //   }
-      //   receivedTiles(tiles);
-      // });
-      // tiles = tileResponseToData(tiles, null, tileIds);
-
-      // console.log(`[tdf] tiles: ${JSON.stringify(tiles)}`);
-      // console.log(`[tdf] this.chromSizes: ${JSON.stringify(this.chromSizes)}`);
 
       return tiles;
     }
@@ -209,8 +191,8 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
 
         const tile = {
           tilePos: [x],
-          // tileId: "tabix." + z + "." + x,
-          tileId: z + "." + x,
+          tileId: "tabix." + z + "." + x,
+          // tileId: z + "." + x,
           zoomLevel: z,
         };
 
@@ -219,16 +201,8 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
         let minX = minXOriginal;
         const maxX = tsInfo.min_pos[0] + (x + 1) * tileWidth;
 
-        // const basesPerPixel = this.determineScale(minX, maxX);
-        // const basesPerBin = (maxX - minX) / this.TILE_SIZE;
-
-        // const binStarts = [];
-        // for (let i = 0; i < this.TILE_SIZE; i++) {
-        //   binStarts.push(minX + i * basesPerBin);
-        // }
-
         const { chromLengths, cumPositions } = this.chromSizes;
-        const objs = [];
+        const tileObjs = [];
 
         for (let i = 0; i < cumPositions.length; i++) {
           const chromName = cumPositions[i].chr;
@@ -245,18 +219,9 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
               // fetch from the start until the end of the chromosome
               startPos = minX - chromStart;
               endPos = chromEnd - chromStart;
-              // lines = [];
-              // console.log(`[tdf] startPos: ${startPos}, endPos: ${endPos}`);
-              // recordPromises.push(
-              //   this.tabixFile
-              //     .getLines(chromName, startPos, endPos, (line, fileOffset) => {
-              //       console.log(`[tdf] line: ${line}`);
-              //       return line;
-              //     })
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
-                // console.log(`[tdf] line: ${line}`);
                 const fields = line.split('\t');
-                objs.push({
+                tileObjs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
                   chrOffset: chromStart,
@@ -270,19 +235,9 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
             } else {
               startPos = Math.floor(minX - chromStart);
               endPos = Math.ceil(maxX - chromStart);
-              // console.log(`[tdf] startPos: ${startPos}, endPos: ${endPos}`);
-              // lines = [];
-              // recordPromises.push(
-              //   this.tabixFile
-              //     .getLines(chromName, startPos, endPos, (line, fileOffset) => {
-              //       console.log(`[tdf] line: ${line}`);
-              //       return line;
-              //     })
-              // );
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
-                // console.log(`[tdf] line: ${line}`);
                 const fields = line.split('\t');
-                objs.push({
+                tileObjs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
                   chrOffset: chromStart,
@@ -297,71 +252,9 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
           }
         }
 
-        // console.log(`[tdf] values: ${JSON.stringify(objs)}`);
-
-        tile.tileId = `${z}.${x}`;
-        tile.remoteId = `${z}.${x}`;
-        tile.tileData = objs;
-        // return tile;
-
-        return objs;
-
-        // return Promise.all(recordPromises).then((v) => {
-        //   const values = v;
-        //   console.log(`[tdf] values: ${JSON.stringify(values)}`);
-          // const values = v.flat();
-
-          // var dense = [];
-          // for (var i = 0; i < this.TILE_SIZE; i++) {
-          //   dense.push(null);
-          // }
-
-          // // Currently we use the same binning strategy in all cases (basesPerBin =>< basesPerBinInFile)
-          // binStarts.forEach((curStart, index) => {
-          //   if (curStart < minXOriginal || curStart > maxX) {
-          //     return;
-          //   }
-          //   const filtered = values
-          //     .filter((v) => {
-          //       return curStart >= v.startAbs && curStart < v.endAbs;
-          //     })
-          //     .map((v) => v.score);
-          //   dense[index] = filtered.length > 0 ? filtered[0] : null;
-          // });
-
-          // tile.min_value = Math.min(...dense);
-          // tile.max_value = Math.max(...dense);
-
-          // const dde = new HGC.utils.DenseDataExtrema1D(dense);
-          // tile.dense = dense;
-          // tile.denseDataExtrema = dde;
-          // tile.minNonZero = dde.minNonZeroInTile;
-          // tile.maxNonZero = dde.maxNonZeroInTile;
-        //   return tile;
-        // });
+        return tileObjs;
       });
     }
-
-    // We never want to request more than 1024 * 20 elements from the file.
-    // determineScale(minX, maxX) {
-    //   const reductionLevels = [1];
-    //   const numRequestedElements = maxX - minX;
-
-    //   this.tabixFileHeader.zoomLevels.forEach((z) => {
-    //     reductionLevels.push(z.reductionLevel);
-    //   });
-
-    //   for (var i = 0; i < reductionLevels.length; i++) {
-    //     const rl = reductionLevels[i];
-    //     const numElementsFromFile = numRequestedElements / rl;
-    //     if (numElementsFromFile <= this.TILE_SIZE * 20) {
-    //       return rl;
-    //     }
-    //   }
-
-    //   // return the highest reductionLevel, if we could not find anything better
-    //   return reductionLevels.slice(-1)[0];
-    // }
   }
 
   return new TabixDataFetcherClass(...args);

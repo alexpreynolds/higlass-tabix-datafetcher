@@ -11999,14 +11999,14 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
         const recordPromises = [];
         const tile = {
           tilePos: [x],
-          tileId: z + "." + x,
+          tileId: "tabix." + z + "." + x,
           zoomLevel: z
         };
         const minXOriginal = tsInfo.min_pos[0] + x * tileWidth;
         let minX = minXOriginal;
         const maxX = tsInfo.min_pos[0] + (x + 1) * tileWidth;
         const { chromLengths, cumPositions } = this.chromSizes;
-        const objs = [];
+        const tileObjs = [];
         for (let i = 0; i < cumPositions.length; i++) {
           const chromName = cumPositions[i].chr;
           const chromStart = cumPositions[i].pos;
@@ -12018,7 +12018,7 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
               endPos = chromEnd - chromStart;
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split("	");
-                objs.push({
+                tileObjs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
                   chrOffset: chromStart,
@@ -12034,7 +12034,7 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
               endPos = Math.ceil(maxX - chromStart);
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split("	");
-                objs.push({
+                tileObjs.push({
                   xStart: chromStart + parseInt(fields[1], 10),
                   xEnd: chromStart + parseInt(fields[2], 10),
                   chrOffset: chromStart,
@@ -12048,10 +12048,7 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
             }
           }
         }
-        tile.tileId = `${z}.${x}`;
-        tile.remoteId = `${z}.${x}`;
-        tile.tileData = objs;
-        return objs;
+        return tileObjs;
       });
     }
   }
