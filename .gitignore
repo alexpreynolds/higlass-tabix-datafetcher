@@ -28,3 +28,4 @@ lib/vendor
 app/test*.html
 es
 *.tgz
+package-lock.json

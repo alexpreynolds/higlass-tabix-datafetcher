@@ -19,34 +19,6 @@ describe("Tabix data fetcher tests", () => {
         done();
       });
     }));
-
-    // it("should fetch a tile", (done) => {
-    //   df.fetchTilesDebounced(
-    //     (tiles) => {
-    //       console.warn(tiles);
-    //       expect(tiles).to.include.all.keys("0.0");
-
-    //       expect(tiles["0.0"].length).to.be.above(0);
-
-    //       done();
-    //     },
-    //     ["0.0"]
-    //   );
-    // });
-
-    // it("should fetch two tiles", (done) => {
-    //   df.fetchTilesDebounced(
-    //     (tiles) => {
-    //       expect(tiles).to.include.all.keys("1.0", "1.1");
-
-    //       expect(tiles["1.0"].length).to.be.above(0);
-    //       expect(tiles["1.1"].length).to.be.above(0);
-
-    //       done();
-    //     },
-    //     ["1.0", "1.1"]
-    //   );
-    // });
   });
 
   
