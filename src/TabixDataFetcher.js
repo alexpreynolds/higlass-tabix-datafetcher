@@ -221,14 +221,18 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
               endPos = chromEnd - chromStart;
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split('\t');
+                const xStart = chromStart + parseInt(fields[1], 10);
+                const xEnd = chromStart + parseInt(fields[2], 10);
+                const importance = fields.length > 4 ? parseFloat(fields[4], 10) : Math.random();
+                const transcriptId = fields.length > 12 ? `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}` : fields.length > 3 ? fields[3] : slugid.nice();
                 tileObjs.push({
-                  xStart: chromStart + parseInt(fields[1], 10),
-                  xEnd: chromStart + parseInt(fields[2], 10),
+                  xStart: xStart,
+                  xEnd: xEnd,
                   chrOffset: chromStart,
-                  importance: parseFloat(fields[4], 10),
+                  importance: importance,
                   uid: slugid.nice(),
                   fields: fields,
-                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`,
+                  transcriptId: transcriptId,
                 });
               });
               minX = chromEnd;
@@ -237,14 +241,18 @@ const TabixDataFetcher = function TabixDataFetcher(HGC, ...args) {
               endPos = Math.ceil(maxX - chromStart);
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split('\t');
+                const xStart = chromStart + parseInt(fields[1], 10);
+                const xEnd = chromStart + parseInt(fields[2], 10);
+                const importance = fields.length > 4 ? parseFloat(fields[4], 10) : Math.random();
+                const transcriptId = fields.length > 12 ? `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}` : fields.length > 3 ? fields[3] : slugid.nice();
                 tileObjs.push({
-                  xStart: chromStart + parseInt(fields[1], 10),
-                  xEnd: chromStart + parseInt(fields[2], 10),
+                  xStart: xStart,
+                  xEnd: xEnd,
                   chrOffset: chromStart,
-                  importance: parseFloat(fields[4], 10),
+                  importance: importance,
                   uid: slugid.nice(),
                   fields: fields,
-                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`,
+                  transcriptId: transcriptId,
                 });
               });
               break;

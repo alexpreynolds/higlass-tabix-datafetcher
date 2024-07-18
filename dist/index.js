@@ -12018,14 +12018,18 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
               endPos = chromEnd - chromStart;
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split("	");
+                const xStart = chromStart + parseInt(fields[1], 10);
+                const xEnd = chromStart + parseInt(fields[2], 10);
+                const importance = fields.length > 4 ? parseFloat(fields[4], 10) : Math.random();
+                const transcriptId = fields.length > 12 ? `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}` : fields.length > 3 ? fields[3] : import_slugid.default.nice();
                 tileObjs.push({
-                  xStart: chromStart + parseInt(fields[1], 10),
-                  xEnd: chromStart + parseInt(fields[2], 10),
+                  xStart,
+                  xEnd,
                   chrOffset: chromStart,
-                  importance: parseFloat(fields[4], 10),
+                  importance,
                   uid: import_slugid.default.nice(),
                   fields,
-                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`
+                  transcriptId
                 });
               });
               minX = chromEnd;
@@ -12034,14 +12038,18 @@ var TabixDataFetcher = function TabixDataFetcher2(HGC, ...args) {
               endPos = Math.ceil(maxX - chromStart);
               await this.tabixFile.getLines(chromName, startPos, endPos, (line, fileOffset) => {
                 const fields = line.split("	");
+                const xStart = chromStart + parseInt(fields[1], 10);
+                const xEnd = chromStart + parseInt(fields[2], 10);
+                const importance = fields.length > 4 ? parseFloat(fields[4], 10) : Math.random();
+                const transcriptId = fields.length > 12 ? `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}` : fields.length > 3 ? fields[3] : import_slugid.default.nice();
                 tileObjs.push({
-                  xStart: chromStart + parseInt(fields[1], 10),
-                  xEnd: chromStart + parseInt(fields[2], 10),
+                  xStart,
+                  xEnd,
                   chrOffset: chromStart,
-                  importance: parseFloat(fields[4], 10),
+                  importance,
                   uid: import_slugid.default.nice(),
                   fields,
-                  transcriptId: `${fields[7]}_${fields[0]}_${fields[1]}_${fields[2]}`
+                  transcriptId
                 });
               });
               break;
