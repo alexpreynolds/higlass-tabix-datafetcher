@@ -29,3 +29,6 @@ app/test*.html
 es
 *.tgz
 package-lock.json
+*.gz
+*.gz.tbi
+*.gff3

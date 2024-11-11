@@ -22,7 +22,7 @@ register (
 );
 ```
 
-Configure the view configuration's `horizontal-transcripts` object with `data` attributes pointing to the web-hosted tabix file:
+Configure the HiGlass view configuration's `horizontal-transcripts` object with `data` attributes pointing to the web-hosted tabix file, along with an appropriate chromSizes file, e.g.:
 
 ```
 {
@@ -99,4 +99,14 @@ formatTranscriptData(ts) {
   };
   return result;
 }
+```
+
+The convenience script `scripts/gencode_gff3_to_tabix.py` makes a bgzipped tabix file and its index that can be consumed by this data fetcher, e.g.:
+
+```
+$ wget -qO- "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gff3.gz" | gunzip -c > gencode.v19.annotation.gff3
+$ scripts/gencode_gff3_to_tabix.py gencode.v19.annotation.gff3 gencode.v19.annotation.hg19.gz
+$ ls -l gencode.v19.annotation.hg19.gz*
+-rw-r--r--  1 areynolds  staff   7700441 Nov  9 17:43 gencode.v19.annotation.hg19.gz
+-rw-r--r--  1 areynolds  staff    197319 Nov  9 17:43 gencode.v19.annotation.hg19.gz.tbi
 ```
