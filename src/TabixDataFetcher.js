@@ -1,6 +1,6 @@
 import slugid from "slugid";
 import { TabixIndexedFile } from "@gmod/tabix";
-import { RemoteFile } from "apr144-generic-filehandle";
+import { RemoteFile } from "generic-filehandle";
 import { tsvParseRows } from "d3-dsv";
 import { text } from "d3-request";
 
